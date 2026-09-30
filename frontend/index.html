@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce QA Application</title>
+    <link rel="stylesheet" href="/frontend/style.css">
+</head>
+
+<body>
+
+    <div id="login-page">
+
+        <div class="login-container">
+
+            <h1>E-Commerce Store</h1>
+
+            <h2>Login</h2>
+
+            <form id="login-form">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    id="username"
+                    data-testid="username"
+                    type="text"
+                    placeholder="Enter username"
+                    required
+                >
+
+                <label for="email">
+                    Email
+                </label>
+
+                <input
+                    id="email"
+                    data-testid="email"
+                    type="email"
+                    placeholder="Enter email"
+                    required
+                >
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    id="password"
+                    data-testid="password"
+                    type="password"
+                    placeholder="Enter password"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    data-testid="login-button"
+                >
+                    Login
+                </button>
+
+            </form>
+
+            <p
+                id="login-error"
+                data-testid="login-error"
+            ></p>
+
+        </div>
+
+    </div>
+
+    <script src="/frontend/app.js"></script>
+
+</body>
+</html>

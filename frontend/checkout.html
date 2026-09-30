@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout - E-Commerce QA Application</title>
+
+    <link rel="stylesheet" href="/frontend/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <h1>Checkout</h1>
+
+    </header>
+
+
+    <main>
+
+        <div class="checkout-container">
+
+            <h2>Customer Details</h2>
+
+            <form id="checkout-form">
+
+                <label for="first-name">
+                    First Name
+                </label>
+
+                <input
+                    id="first-name"
+                    data-testid="first-name"
+                    type="text"
+                    required
+                >
+
+
+                <label for="last-name">
+                    Last Name
+                </label>
+
+                <input
+                    id="last-name"
+                    data-testid="last-name"
+                    type="text"
+                    required
+                >
+
+
+                <label for="address">
+                    Address
+                </label>
+
+                <textarea
+                    id="address"
+                    data-testid="address"
+                    required
+                ></textarea>
+
+
+                <button
+                    type="submit"
+                    data-testid="place-order"
+                >
+                    Place Order
+                </button>
+
+            </form>
+
+
+            <div
+                id="order-confirmation"
+                data-testid="order-confirmation"
+            ></div>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        const checkoutForm =
+            document.querySelector("#checkout-form");
+
+        const confirmation =
+            document.querySelector(
+                '[data-testid="order-confirmation"]'
+            );
+
+
+        checkoutForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                const userId =
+                    sessionStorage.getItem("userId");
+
+                const cart =
+                    JSON.parse(
+                        sessionStorage.getItem("cart") || "[]"
+                    );
+
+
+                if (!userId) {
+
+                    confirmation.textContent =
+                        "User session not found.";
+
+                    return;
+                }
+
+
+                if (cart.length === 0) {
+
+                    confirmation.textContent =
+                        "Your cart is empty.";
+
+                    return;
+                }
+
+
+                const items = cart.map(product => ({
+                    product_id: product.id,
+                    quantity: product.quantity
+                }));
+
+
+                try {
+
+                    const response =
+                        await fetch("/orders/", {
+
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+                                user_id: Number(userId),
+                                items: items
+                            })
+                        });
+
+
+                    const data =
+                        await response.json();
+
+
+                    if (response.status === 201) {
+
+                        confirmation.textContent =
+                            `Order placed successfully. Order ID: ${data.id}`;
+
+                        sessionStorage.removeItem("cart");
+
+                    } else {
+
+                        confirmation.textContent =
+                            data.detail ||
+                            "Unable to place order.";
+                    }
+
+                } catch (error) {
+
+                    confirmation.textContent =
+                        "Unable to connect to the server.";
+                }
+            }
+        );
+
+    </script>
+
+</body>
+</html>

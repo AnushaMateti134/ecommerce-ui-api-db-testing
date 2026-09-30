@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Products - E-Commerce QA Application</title>
+
+    <link rel="stylesheet" href="/frontend/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <h1>E-Commerce Store</h1>
+
+        <button
+            id="cart-button"
+            data-testid="cart-button"
+        >
+            Cart
+        </button>
+
+    </header>
+
+
+    <main>
+
+        <h2>Products</h2>
+
+        <div
+            id="product-list"
+            data-testid="product-list"
+            class="product-list"
+        >
+            <p>Loading products...</p>
+        </div>
+
+    </main>
+
+
+    <script src="/frontend/app.js"></script>
+
+    <script>
+
+        async function loadProducts() {
+
+            const productList =
+                document.querySelector(
+                    '[data-testid="product-list"]'
+                );
+
+            try {
+
+                const response =
+                    await fetch("/products/");
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Failed to load products"
+                    );
+                }
+
+                const products =
+                    await response.json();
+
+                productList.innerHTML = "";
+
+                products.forEach(product => {
+
+                    const productElement =
+                        document.createElement("div");
+
+                    productElement.className =
+                        "product-item";
+
+                    productElement.setAttribute(
+                        "data-testid",
+                        "product-item"
+                    );
+
+                    productElement.innerHTML = `
+                        <h3>${product.name}</h3>
+
+                        <p>
+                            ${product.description || ""}
+                        </p>
+
+                        <p>
+                            ₹${product.price}
+                        </p>
+
+                        <button
+                            data-testid="add-to-cart"
+                        >
+                            Add to Cart
+                        </button>
+                    `;
+
+                    const addButton =
+                        productElement.querySelector(
+                            '[data-testid="add-to-cart"]'
+                        );
+
+                    addButton.addEventListener(
+                        "click",
+                        function () {
+
+                            addToCart(
+                                product.id,
+                                product.name,
+                                product.price
+                            );
+                        }
+                    );
+
+                    productList.appendChild(
+                        productElement
+                    );
+                });
+
+            } catch (error) {
+
+                productList.innerHTML =
+                    "<p>Unable to load products.</p>";
+
+                console.error(error);
+            }
+        }
+
+
+        loadProducts();
+
+    </script>
+
+</body>
+</html>

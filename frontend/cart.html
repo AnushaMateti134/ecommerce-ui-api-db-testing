@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cart - E-Commerce QA Application</title>
+
+    <link rel="stylesheet" href="/frontend/style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <h1>Shopping Cart</h1>
+
+        <button
+            id="back-to-products"
+            onclick="window.location.href='/frontend/products.html'"
+        >
+            Continue Shopping
+        </button>
+
+    </header>
+
+
+    <main>
+
+        <div
+            id="cart-items"
+            data-testid="cart-items"
+        >
+        </div>
+
+
+        <div class="cart-summary">
+
+            <h2>
+                Total:
+                <span data-testid="cart-total">
+                    ₹0
+                </span>
+            </h2>
+
+            <button
+                id="checkout-button"
+                data-testid="checkout-button"
+                onclick="proceedToCheckout()"
+            >
+                Checkout
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        function loadCart() {
+
+            const cart = JSON.parse(
+                sessionStorage.getItem("cart") || "[]"
+            );
+
+            const container =
+                document.querySelector("#cart-items");
+
+            const totalElement =
+                document.querySelector(
+                    '[data-testid="cart-total"]'
+                );
+
+            if (cart.length === 0) {
+
+                container.innerHTML =
+                    "<p>Your cart is empty.</p>";
+
+                totalElement.textContent = "₹0";
+
+                return;
+            }
+
+            let total = 0;
+
+            container.innerHTML = "";
+
+            cart.forEach(product => {
+
+                const itemTotal =
+                    product.price * product.quantity;
+
+                total += itemTotal;
+
+                const item =
+                    document.createElement("div");
+
+                item.className = "cart-item";
+
+                item.setAttribute(
+                    "data-testid",
+                    "cart-item"
+                );
+
+                item.innerHTML = `
+                    <h3>${product.name}</h3>
+
+                    <p>
+                        Price: ₹${product.price}
+                    </p>
+
+                    <p>
+                        Quantity: ${product.quantity}
+                    </p>
+
+                    <p>
+                        Subtotal: ₹${itemTotal}
+                    </p>
+                `;
+
+                container.appendChild(item);
+            });
+
+            totalElement.textContent =
+                `₹${total}`;
+        }
+
+
+        function proceedToCheckout() {
+
+            const cart = JSON.parse(
+                sessionStorage.getItem("cart") || "[]"
+            );
+
+            if (cart.length === 0) {
+
+                alert("Your cart is empty.");
+
+                return;
+            }
+
+            window.location.href =
+                "/frontend/checkout.html";
+        }
+
+
+        loadCart();
+
+    </script>
+
+</body>
+</html>
